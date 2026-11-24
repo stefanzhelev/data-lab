@@ -1,5 +1,25 @@
 # Copy to terraform.tfvars (gitignored). None of these are secrets, but they stay
-# out of the public repo.
+# out of the public repo. Required values are set; the rest show their defaults
+# and can stay commented out.
+
+# ── Cloudflare ──────────────────────────────────────────────────────────────
+
 account_id  = "<cloudflare-account-id>"
 zone_id     = "<stefanzhelev.com-zone-id>"
 bucket_name = "<bucket-behind-data.stefanzhelev.com>"
+
+# zone_name          = "stefanzhelev.com"
+# data_domain        = "data.stefanzhelev.com"
+# lab_subdomain      = "lab"
+# pages_project      = "data-lab"
+# extra_cors_origins = []   # e.g. ["https://stefanzhelev.com"]
+
+# ── GitHub ──────────────────────────────────────────────────────────────────
+
+# github_owner = "stefanzhelev"
+# github_repo  = "data-lab"
+
+# ── OpenTofu state encryption ───────────────────────────────────────────────
+
+# state_passphrase is required but secret: don't put it here. Pass it as
+#   export TF_VAR_state_passphrase="$(security find-generic-password -s tofu-data-lab -w)"
