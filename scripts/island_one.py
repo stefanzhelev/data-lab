@@ -23,7 +23,7 @@ async def main(notebook: Path, out_prefix: Path) -> None:
     out_prefix.parent.mkdir(parents=True, exist_ok=True)
     out_prefix.with_suffix(".head.html").write_text(generator.render_head())
     out_prefix.with_suffix(".body.html").write_text(
-        generator.render_body(include_init_island=True, include_payload=True)
+        generator.render_body(include_init_island=False, include_payload=True)
     )
     match = re.search(r'app_title\s*=\s*"([^"]+)"', notebook.read_text())
     title = match.group(1) if match else notebook.stem

@@ -6,9 +6,13 @@
 #     "sqlglot",
 #     "pandas",
 #     "altair",
-#     "stefanzhelev-datalab>=0.1,<0.2",
+#     # Not on PyPI: the browser installs the wheel the site serves (built by
+#     # deploy-pages.yml, which fails if this file is missing). Keep the version
+#     # in sync with libs/datalab/pyproject.toml.
+#     "stefanzhelev-datalab @ https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.1.0-py3-none-any.whl",
 # ]
 #
+# # Locally (and when CI pre-renders) uv uses the repo copy instead of the URL.
 # [tool.uv.sources]
 # stefanzhelev-datalab = { path = "../../../libs/datalab", editable = true }
 # ///
