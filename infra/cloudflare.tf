@@ -33,7 +33,7 @@ resource "cloudflare_r2_bucket_cors" "data" {
     allowed = {
       methods = ["GET", "HEAD"]
       origins = concat(
-        ["https://${local.lab_domain}", "https://*.${var.pages_project}.pages.dev", "https://${var.pages_project}.pages.dev", "http://localhost:2718", "http://localhost:5173"],
+        ["https://${local.lab_domain}", "https://*.${cloudflare_pages_project.lab.subdomain}", "https://${cloudflare_pages_project.lab.subdomain}", "http://localhost:2718", "http://localhost:5173"],
         var.extra_cors_origins,
       )
       headers = ["*"]
@@ -86,7 +86,7 @@ resource "cloudflare_dns_record" "lab" {
   zone_id = var.zone_id
   name    = local.lab_domain
   type    = "CNAME"
-  content = "${cloudflare_pages_project.lab.name}.pages.dev"
+  content = cloudflare_pages_project.lab.subdomain # e.g. data-lab-53f.pages.dev: pages.dev names are global, so it can differ from the project name
   proxied = true
   ttl     = 1
   comment = "data-lab Pages site (managed by stefanzhelev/data-lab infra/)"

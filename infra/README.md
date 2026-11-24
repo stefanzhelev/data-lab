@@ -19,13 +19,15 @@ Not managed: the bucket's custom domain `data.stefanzhelev.com` (the provider ca
 
 ## Apply
 
-Run from inside `~/Documents/GitHub-stefanzhelev/` so direnv supplies the `stefanzhelev` GitHub token.
+`data-lab/.envrc` (direnv) sets all of the below from `.env` and the Keychain. Without direnv, export them by hand.
+The GitHub token is a required variable on purpose, so tofu never runs as whatever `GH_TOKEN` the shell happens to have.
 
 ```bash
 cp backend.hcl.example backend.hcl && cp terraform.tfvars.example terraform.tfvars   # fill in
 export CLOUDFLARE_API_TOKEN=...          # R2, Pages, DNS, Zone Rulesets edit + Account API Tokens edit
 export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=...           # R2 S3 keys for the state bucket
 export TF_VAR_state_passphrase="$(security find-generic-password -s tofu-data-lab -w)"
+export TF_VAR_github_token="$(security find-generic-password -s gh-stefanzhelev -w)"
 tofu init -backend-config=backend.hcl && tofu plan && tofu apply
 ```
 

@@ -49,6 +49,8 @@ provider "cloudflare" {
 }
 
 provider "github" {
-  # Token from GITHUB_TOKEN / GH_TOKEN (set by direnv in ~/Documents/GitHub-stefanzhelev).
+  # Explicit token, never the ambient GH_TOKEN: without direnv that is another
+  # account, and tofu would only fail later with a 403.
   owner = var.github_owner
+  token = var.github_token
 }

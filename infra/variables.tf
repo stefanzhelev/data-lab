@@ -35,7 +35,7 @@ variable "lab_subdomain" {
 
 variable "pages_project" {
   type    = string
-  default = "data-lab"
+  default = "stefanzhelev-datalab"
 }
 
 variable "extra_cors_origins" {
@@ -52,6 +52,12 @@ variable "github_owner" {
   description = "GitHub user or org that owns the repo (sets the provider's owner)."
   type        = string
   default     = "stefanzhelev"
+}
+
+variable "github_token" {
+  description = "Token for the github_owner account. Pass as TF_VAR_github_token (data-lab/.envrc reads it from the Keychain)."
+  type        = string
+  sensitive   = true
 }
 
 variable "github_repo" {

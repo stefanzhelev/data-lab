@@ -11,7 +11,7 @@ bucket_name = "<bucket-behind-data.stefanzhelev.com>"
 # zone_name          = "stefanzhelev.com"
 # data_domain        = "data.stefanzhelev.com"
 # lab_subdomain      = "lab"
-# pages_project      = "data-lab"
+# pages_project      = "stefanzhelev-datalab"
 # extra_cors_origins = []   # e.g. ["https://stefanzhelev.com"]
 
 # ── GitHub ──────────────────────────────────────────────────────────────────
