@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="text-scale" content="scale" />
+		<script>
+			// Theme: saved choice, else the OS setting. Inline so there's no flash, and so it
+			// works on pages without SvelteKit's client JS (the marimo dashboards).
+			(function () {
+				var saved = null;
+				try {
+					saved = localStorage.getItem('theme');
+				} catch (e) {}
+				var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+				document.documentElement.classList.toggle('dark', dark);
+				document.addEventListener('click', function (e) {
+					if (!e.target.closest || !e.target.closest('[data-theme-toggle]')) return;
+					var on = document.documentElement.classList.toggle('dark');
+					try {
+						localStorage.setItem('theme', on ? 'dark' : 'light');
+					} catch (e) {}
+				});
+			})();
+		</script>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

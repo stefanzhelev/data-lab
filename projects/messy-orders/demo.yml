@@ -1,0 +1,16 @@
+# Read by scripts/build_islands.py (site gallery) and scripts/build_data_index.py
+# (https://data.stefanzhelev.com/ index). Keep descriptions to one sentence.
+title: Messy orders
+description: Cleaning, quarantining and reconciling a deliberately messy orders feed with dbt on DuckDB.
+skills: [dbt, DuckDB, data quality, marimo]
+licence: CC-BY-4.0
+source: Synthetic practice data written for this demo (example.com addresses only).
+
+datasets:
+  raw/customers.csv: Customer master as delivered (duplicates, padding, mixed case).
+  raw/orders.csv: Order lines as delivered, with about 15 planted defects.
+  customers_clean.parquet: One row per customer; latest version wins.
+  orders_enriched.parquet: Valid orders joined to the customer's country.
+  orders_quarantine.parquet: Rejected order lines with their raw text and reject_reason.
+  daily_revenue.parquet: Revenue and orders per day and country, excluding cancelled.
+  customers_quarantine.parquet: Rejected customer rows (empty when all pass).

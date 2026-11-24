@@ -1,0 +1,29 @@
+name: Infra
+
+# Static checks only. `tofu apply` is run locally (see infra/README.md) so the
+# Cloudflare and state credentials never need to live in CI.
+
+on:
+  pull_request:
+    paths: [infra/**]
+  push:
+    branches: [main]
+    paths: [infra/**]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: opentofu/setup-opentofu@v1
+      - run: tofu fmt -check -recursive
+      - run: tofu init -backend=false -input=false
+      - run: tofu validate

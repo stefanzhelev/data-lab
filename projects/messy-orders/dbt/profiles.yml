@@ -1,0 +1,9 @@
+messy_orders:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: target/messy_orders.duckdb
+      threads: 4
+      settings:
+        TimeZone: UTC

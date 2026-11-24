@@ -1,0 +1,5 @@
+# Copy to backend.hcl (gitignored) and run: tofu init -backend-config=backend.hcl
+# Credentials: AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY = an R2 API token with access to the state bucket.
+bucket    = "<state-bucket>"
+key       = "data-lab/infra.tfstate"
+endpoints = { s3 = "https://<account_id>.r2.cloudflarestorage.com" }

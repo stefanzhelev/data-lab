@@ -1,0 +1,26 @@
+# Repo tooling only (lint, islands build). Every demo has its own environment:
+# notebooks via PEP 723 blocks, pipelines via projects/<demo>/<tool>/pyproject.toml.
+[project]
+name = "data-lab"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = ["ruff>=0.8", "marimo>=0.25"]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["site", "**/.venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+ignore = ["S101", "S603", "S607", "S608"]
+
+[tool.ruff.lint.per-file-ignores]
+"projects/*/dashboards/*.py" = ["B018"]
+"scripts/build_data_index.py" = ["E501"]  # inline HTML/CSS template

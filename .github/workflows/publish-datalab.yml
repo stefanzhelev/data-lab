@@ -1,0 +1,69 @@
+name: Publish stefanzhelev-datalab
+
+# Follows https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+# Trusted publishing (OIDC, no tokens). Release = push a tag like datalab-v0.1.0.
+# One-time setup: pending publishers on pypi.org and test.pypi.org (owner
+# stefanzhelev, repo data-lab, workflow publish-datalab.yml, environments
+# pypi / testpypi), and required reviewers on the `pypi` environment.
+
+on:
+  push:
+    tags: ["datalab-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: libs/datalab
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - name: Tag must match pyproject version
+        run: |
+          version=$(uv version --short)
+          test "${GITHUB_REF_NAME#datalab-v}" = "$version" \
+            || { echo "tag $GITHUB_REF_NAME != pyproject version $version"; exit 1; }
+      - run: uv run --group dev pytest -q
+      - run: uv build
+      - uses: actions/upload-artifact@v5
+        with:
+          name: python-package-distributions
+          path: libs/datalab/dist/
+
+  publish-to-testpypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/stefanzhelev-datalab
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: python-package-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-to-pypi:
+    needs: publish-to-testpypi
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/stefanzhelev-datalab
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: python-package-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
