@@ -1,5 +1,5 @@
 # Copy to terraform.tfvars (gitignored). None of these are secrets, but they stay
-# out of the public repo; CI passes them as TF_VAR_* from GitHub secrets.
+# out of the public repo.
 account_id  = "<cloudflare-account-id>"
 zone_id     = "<stefanzhelev.com-zone-id>"
 bucket_name = "<bucket-behind-data.stefanzhelev.com>"

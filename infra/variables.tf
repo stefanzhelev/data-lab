@@ -1,3 +1,7 @@
+# =============================================================================
+# Cloudflare provider — R2 bucket, custom domain, Pages project (cloudflare.tf)
+# =============================================================================
+
 variable "account_id" {
   description = "Cloudflare account ID."
   type        = string
@@ -38,4 +42,30 @@ variable "extra_cors_origins" {
   description = "Additional origins allowed to fetch from the bucket (e.g. a future stefanzhelev.com/lab)."
   type        = list(string)
   default     = []
+}
+
+# =============================================================================
+# GitHub provider — Actions secrets and deployment environments (github.tf)
+# =============================================================================
+
+variable "github_owner" {
+  description = "GitHub user or org that owns the repo (sets the provider's owner)."
+  type        = string
+  default     = "stefanzhelev"
+}
+
+variable "github_repo" {
+  description = "Repository that receives the Actions secrets and environments."
+  type        = string
+  default     = "data-lab"
+}
+
+# =============================================================================
+# OpenTofu itself — state encryption (versions.tf), not tied to a provider
+# =============================================================================
+
+variable "state_passphrase" {
+  description = "Passphrase for OpenTofu state encryption (min. 16 characters). Pass as TF_VAR_state_passphrase."
+  type        = string
+  sensitive   = true
 }

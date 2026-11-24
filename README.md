@@ -23,7 +23,7 @@ projects/<demo>/dashboards/*.py      ──(marimo islands)──►  SvelteKit 
 | `libs/datalab/` | [`stefanzhelev-datalab`](https://pypi.org/project/stefanzhelev-datalab/) on PyPI: loads remote files into DuckDB, in the browser and locally |
 | `site/` | SvelteKit + shadcn-svelte site that hosts the dashboards as marimo islands |
 | `scripts/` | `build_islands.py` (notebooks → site fragments), `build_data_index.py` (bucket index page) |
-| `infra/` | OpenTofu for the Cloudflare side: bucket, CORS, index rewrite, Pages project and domain |
+| `infra/` | OpenTofu, one file per provider: Cloudflare (bucket, CORS, index rewrite, Pages, CI tokens) and GitHub (Actions secrets, PyPI environments) |
 | `.github/workflows/` | CI, per-demo pipelines, data index, site deploy, PyPI release |
 
 Every demo has its own environment: notebooks declare dependencies inline (PEP 723),
