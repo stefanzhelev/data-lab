@@ -35,3 +35,6 @@ infra/backend.hcl
 index.html
 index.json
 !site/**/index.html
+
+# Built in CI (deploy-pages.yml)
+site/static/wheels/

@@ -20,8 +20,19 @@ app = marimo.App(width="medium", app_title="Messy orders: from raw CSV to truste
 
 
 @app.cell
-def _():
+async def _():
     import os
+    import sys
+
+    if sys.platform == "emscripten":
+        # In the browser the library isn't on PyPI: the site serves the wheel
+        # it was built with (deploy-pages.yml). Keep the version in sync with
+        # libs/datalab/pyproject.toml; the deploy fails if this file is missing.
+        import micropip
+
+        await micropip.install(
+            "https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.1.0-py3-none-any.whl"
+        )
 
     import altair as alt
     import marimo as mo

@@ -8,6 +8,8 @@ on:
     paths:
       - site/**
       - scripts/**
+      - libs/datalab/src/**
+      - libs/datalab/pyproject.toml
       - projects/*/dashboards/**
       - projects/*/demo.yml
       - .github/workflows/deploy-pages.yml
@@ -42,6 +44,14 @@ jobs:
             (cd "$dbt_dir" && uv run dbt build --profiles-dir . --quiet && uv run dbt docs generate --profiles-dir . --static --quiet)
             mkdir -p "site/static/$demo/dbt-docs"
             cp "$dbt_dir/target/static_index.html" "site/static/$demo/dbt-docs/index.html"
+          done
+
+      - name: Bundle the stefanzhelev-datalab wheel (installed by notebooks in the browser)
+        run: |
+          uv build --wheel libs/datalab --out-dir site/static/wheels
+          # Every wheel URL a notebook references must be in this build.
+          for whl in $(grep -ho 'stefanzhelev_datalab-[^"]*\.whl' projects/*/dashboards/*.py | sort -u); do
+            test -f "site/static/wheels/$whl" || { echo "::error::$whl is referenced by a notebook but not built (bump the URL to match libs/datalab/pyproject.toml)"; exit 1; }
           done
 
       - name: Render marimo islands
