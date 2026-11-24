@@ -25,6 +25,7 @@ _READERS = {
     ".json": "read_json_auto('{path}')",
 }
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_USER_AGENT = "stefanzhelev-datalab (+https://github.com/stefanzhelev/data-lab)"
 
 
 def in_browser() -> bool:
@@ -47,7 +48,10 @@ async def fetch(url: str, dest_dir: str | Path | None = None) -> Path:
     else:
         import urllib.request
 
-        with urllib.request.urlopen(url) as response:  # noqa: S310 (caller-supplied URL by design)
+        # Cloudflare's Browser Integrity Check rejects urllib's default
+        # "Python-urllib/x.y" User-Agent (error 1010), so name ourselves.
+        request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})  # noqa: S310
+        with urllib.request.urlopen(request) as response:  # noqa: S310 (caller-supplied URL by design)
             dest.write_bytes(response.read())
     return dest
 
