@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "marimo>=0.25",
+#     "marimo==0.25.2",  # islands 0.26 renders dark on the lab site; bump deliberately
 #     "duckdb",
 #     "sqlglot",
 #     "pandas",
@@ -11,11 +11,10 @@
 #     # in sync with libs/datalab/pyproject.toml.
 #     "stefanzhelev-datalab @ https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.1.0-py3-none-any.whl",
 # ]
-#
-# # Locally (and when CI pre-renders) uv uses the repo copy instead of the URL.
-# [tool.uv.sources]
-# stefanzhelev-datalab = { path = "../../../libs/datalab", editable = true }
 # ///
+# No [tool.uv.sources] path override here: a hosted runner (marimo hub, molab)
+# gets this file alone, and uv fails on a path that isn't there.
+# scripts/build_islands.py swaps in the repo copy of the library when it renders.
 
 import marimo
 

@@ -14,6 +14,7 @@ Set DATA_URL to pre-render against something other than the live bucket.
 """
 
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -25,13 +26,23 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "site" / "src" / "generated"
 
 
+LIB = ROOT / "libs" / "datalab"
+# Notebooks pin the library to the wheel URL the live site serves (so they also
+# run standalone, e.g. on marimo hub). The build must render against the repo
+# copy instead: the wheel at that URL is the *previous* deploy's.
+LIB_REQUIREMENT = re.compile(r"^stefanzhelev-datalab\s*@\s*\S+", re.MULTILINE)
+
+
 def render(notebook: Path, out_prefix: Path) -> dict:
+    exported = subprocess.run(
+        ["uv", "export", "--script", notebook.name, "--no-hashes", "--quiet"],
+        cwd=notebook.parent,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as req:
-        subprocess.run(
-            ["uv", "export", "--script", notebook.name, "--no-hashes", "--quiet", "-o", req.name],
-            cwd=notebook.parent,
-            check=True,
-        )
+        req.write(LIB_REQUIREMENT.sub(lambda _: f"stefanzhelev-datalab @ {LIB.as_uri()}", exported))
     result = subprocess.run(
         [
             "uv",
