@@ -29,20 +29,34 @@ OUT = ROOT / "site" / "src" / "generated"
 LIB = ROOT / "libs" / "datalab"
 # Notebooks pin the library to the wheel URL the live site serves (so they also
 # run standalone, e.g. on marimo hub). The build must render against the repo
-# copy instead: the wheel at that URL is the *previous* deploy's.
-LIB_REQUIREMENT = re.compile(r"^stefanzhelev-datalab\s*@\s*\S+", re.MULTILINE)
+# copy instead: that URL holds the previous deploy's wheel, or nothing yet after
+# a version bump. So rewrite the header before uv resolves it.
+LIB_REQUIREMENT = re.compile(r'"stefanzhelev-datalab\s*@\s*[^"]+"')
+
+
+def requirements(notebook: Path) -> str:
+    """The notebook's PEP 723 requirements, with the library taken from the repo."""
+    with tempfile.TemporaryDirectory() as tmp:
+        script = Path(tmp) / notebook.name
+        script.write_text(
+            LIB_REQUIREMENT.sub(f'"stefanzhelev-datalab @ {LIB.as_uri()}"', notebook.read_text())
+        )
+        exported = subprocess.run(
+            ["uv", "export", "--script", str(script), "--no-hashes", "--quiet"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+    # uv writes the library as a path relative to the temp dir; make it absolute.
+    return "\n".join(
+        f"stefanzhelev-datalab @ {LIB.as_uri()}" if line.strip().endswith("libs/datalab") else line
+        for line in exported.splitlines()
+    )
 
 
 def render(notebook: Path, out_prefix: Path) -> dict:
-    exported = subprocess.run(
-        ["uv", "export", "--script", notebook.name, "--no-hashes", "--quiet"],
-        cwd=notebook.parent,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as req:
-        req.write(LIB_REQUIREMENT.sub(lambda _: f"stefanzhelev-datalab @ {LIB.as_uri()}", exported))
+        req.write(requirements(notebook))
     result = subprocess.run(
         [
             "uv",

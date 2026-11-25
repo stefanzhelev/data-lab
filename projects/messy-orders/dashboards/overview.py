@@ -3,13 +3,15 @@
 # dependencies = [
 #     "marimo==0.25.2",  # islands 0.26 renders dark on the lab site; bump deliberately
 #     "duckdb",
-#     "sqlglot",
+#     # [c] pins sqlglotc to the same version: a stale sqlglotc in a hosted
+#     # image (marimo hub) otherwise shadows sqlglot's modules -> AttributeError.
+#     "sqlglot[c]",
 #     "pandas",
 #     "altair",
 #     # Not on PyPI: the browser installs the wheel the site serves (built by
 #     # deploy-pages.yml, which fails if this file is missing). Keep the version
 #     # in sync with libs/datalab/pyproject.toml.
-#     "stefanzhelev-datalab @ https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.1.0-py3-none-any.whl",
+#     "stefanzhelev-datalab @ https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.2.0-py3-none-any.whl",
 # ]
 # ///
 # No [tool.uv.sources] path override here: a hosted runner (marimo hub, molab)
@@ -37,7 +39,7 @@ async def _():
         import micropip
 
         await micropip.install(
-            "https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.1.0-py3-none-any.whl"
+            "https://lab.stefanzhelev.com/wheels/stefanzhelev_datalab-0.2.0-py3-none-any.whl"
         )
 
     import altair as alt

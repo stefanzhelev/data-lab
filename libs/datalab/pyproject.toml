@@ -1,6 +1,6 @@
 [project]
 name = "stefanzhelev-datalab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Load remote CSV/Parquet into DuckDB, identically in marimo WASM (Pyodide) and locally"
 readme = "README.md"
 requires-python = ">=3.12"
