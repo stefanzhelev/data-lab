@@ -81,7 +81,9 @@ async def _(DATA_URL, load):
 
 @app.cell
 def _(mo):
-    _counts = mo.sql(
+    # mo.sql returns polars when it's installed (e.g. on marimo hub) and pandas
+    # otherwise, so only use indexing both support: df[col][0], list(df[col]).
+    _df = mo.sql(
         """
         SELECT
             (SELECT count(*) FROM orders_raw)        AS rows_in,
@@ -90,15 +92,16 @@ def _(mo):
             (SELECT sum(revenue) FROM daily_revenue) AS revenue
         """,
         output=False,
-    ).iloc[0]
-    _dropped = int(_counts.rows_in - _counts.valid - _counts.quarantined)
+    )
+    _counts = {_col: _df[_col][0] for _col in _df.columns}
+    _dropped = int(_counts["rows_in"] - _counts["valid"] - _counts["quarantined"])
     mo.hstack(
         [
-            mo.stat(int(_counts.rows_in), label="Order lines in"),
-            mo.stat(int(_counts.valid), label="Valid", bordered=True),
-            mo.stat(int(_counts.quarantined), label="Quarantined", bordered=True),
+            mo.stat(int(_counts["rows_in"]), label="Order lines in"),
+            mo.stat(int(_counts["valid"]), label="Valid", bordered=True),
+            mo.stat(int(_counts["quarantined"]), label="Quarantined", bordered=True),
             mo.stat(_dropped, label="Exact duplicates dropped", bordered=True),
-            mo.stat(f"£{_counts.revenue:,.2f}", label="Revenue (excl. cancelled)", bordered=True),
+            mo.stat(f"£{_counts['revenue']:,.2f}", label="Revenue (excl. cancelled)", bordered=True),
         ],
         widths="equal",
     )
@@ -148,10 +151,12 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    _countries = mo.sql(
-        "SELECT DISTINCT coalesce(country, 'unknown') AS c FROM daily_revenue ORDER BY c",
-        output=False,
-    )["c"].tolist()
+    _countries = list(
+        mo.sql(
+            "SELECT DISTINCT coalesce(country, 'unknown') AS c FROM daily_revenue ORDER BY c",
+            output=False,
+        )["c"]
+    )
     country = mo.ui.dropdown(options=["All", *_countries], value="All", label="Country")
     country
     return (country,)
