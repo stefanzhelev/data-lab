@@ -17,7 +17,7 @@ import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 
-__all__ = ["fetch", "in_browser", "load"]
+__all__ = ["fetch", "in_browser", "load", "sidebar"]
 
 _READERS = {
     ".parquet": "read_parquet('{path}')",
@@ -26,6 +26,11 @@ _READERS = {
 }
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 _USER_AGENT = "stefanzhelev-datalab (+https://github.com/stefanzhelev/data-lab)"
+
+LAB_URL = "https://lab.stefanzhelev.com/"
+HOME_URL = "https://stefanzhelev.com"
+DATA_URL = "https://data.stefanzhelev.com"
+REPO_URL = "https://github.com/stefanzhelev/data-lab"
 
 
 def in_browser() -> bool:
@@ -75,3 +80,25 @@ async def load(url: str, table: str, *, con=None, all_varchar: bool = False):
     db = con or duckdb
     db.execute(f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM {reader}")
     return db.table(table)
+
+
+def sidebar(project: str, pages: dict[str, str] | None = None):
+    """The shared navigation sidebar every project dashboard shows.
+
+    Links back to the Data Lab gallery (lab.stefanzhelev.com) and stefanzhelev.com,
+    plus this project's own pages, data and code. ``pages`` maps label -> URL for
+    the project's dashboards; leave it out for a single-page project.
+
+        sidebar("messy-orders")  # last expression of its own cell
+    """
+    import marimo as mo  # only needed when rendering, not for load()
+
+    menu: dict = {LAB_URL: "← All projects"}
+    for label, url in (pages or {}).items():
+        menu[url] = label
+    menu[f"{DATA_URL}/{project}/"] = "Data"
+    menu[f"{REPO_URL}/tree/main/projects/{project}"] = "Code"
+    return mo.sidebar(
+        [mo.md("**Data Lab**"), mo.nav_menu(menu, orientation="vertical")],
+        footer=mo.md(f"[stefanzhelev.com]({HOME_URL})"),
+    )

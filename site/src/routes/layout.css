@@ -137,3 +137,9 @@
 .dark .marimo-islands {
 	color-scheme: dark;
 }
+
+/* Dashboards call stefanzhelev_datalab.sidebar() for their standalone exports;
+   on this site the header already links home, so drop that island entirely. */
+.marimo-islands marimo-island:has(marimo-sidebar) {
+	display: none;
+}

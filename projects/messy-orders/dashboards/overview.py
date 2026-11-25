@@ -20,7 +20,10 @@
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="medium", app_title="Messy orders: from raw CSV to trusted revenue")
+app = marimo.App(
+    width="medium",
+    app_title="Messy orders: from raw CSV to trusted revenue",
+)
 
 
 @app.cell
@@ -40,11 +43,17 @@ async def _():
 
     import altair as alt
     import marimo as mo
-    from stefanzhelev_datalab import load
+    from stefanzhelev_datalab import load, sidebar
 
     # Override locally to test against a dev bucket or a local http.server.
     DATA_URL = os.environ.get("DATA_URL", "https://data.stefanzhelev.com/messy-orders")
-    return DATA_URL, alt, load, mo
+    return DATA_URL, alt, load, mo, sidebar
+
+
+@app.cell(hide_code=True)
+def _(sidebar):
+    sidebar("messy-orders")
+    return
 
 
 @app.cell(hide_code=True)
@@ -65,7 +74,7 @@ def _(mo):
 async def _(DATA_URL, load):
     for _table in ["customers_clean", "orders_enriched", "orders_quarantine", "daily_revenue"]:
         await load(f"{DATA_URL}/{_table}.parquet", _table)
-    await load(f"{DATA_URL}/raw/orders.csv", "orders_raw", all_varchar=True)
+    _ = await load(f"{DATA_URL}/raw/orders.csv", "orders_raw", all_varchar=True)  # no output
     return
 
 
