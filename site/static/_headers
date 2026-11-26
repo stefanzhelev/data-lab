@@ -1,5 +1,0 @@
-# Cloudflare Pages headers. Preview deploys (*.pages.dev) and local dev fetch
-# the wheel from lab.stefanzhelev.com, so allow cross-origin reads.
-/wheels/*
-  Access-Control-Allow-Origin: *
-  Cache-Control: public, max-age=300

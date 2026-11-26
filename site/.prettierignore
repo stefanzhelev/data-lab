@@ -1,6 +1,0 @@
-package-lock.json
-build/
-.svelte-kit/
-src/generated/
-static/
-src/lib/components/ui/

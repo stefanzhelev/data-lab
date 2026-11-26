@@ -1,5 +1,6 @@
-# Repo tooling only (lint, islands build). Every demo has its own environment:
-# notebooks via PEP 723 blocks, pipelines via projects/<demo>/<tool>/pyproject.toml.
+# Repo tooling: the barnacles gallery in marimo/ and linting.
+# Notebooks also declare their own dependencies inline (PEP 723) for `marimo edit --sandbox`;
+# barnacles exports them in this environment, so anything a notebook imports belongs here too.
 [project]
 name = "data-lab"
 version = "0.0.0"
@@ -7,20 +8,29 @@ requires-python = ">=3.12"
 dependencies = []
 
 [dependency-groups]
-dev = ["ruff>=0.8", "marimo>=0.25"]
+dev = [
+    "barnacles>=0.2.1",
+    "marimo>=0.26",
+    "duckdb",
+    "pandas",
+    "altair",
+    "ruff>=0.8",
+]
 
 [tool.uv]
 package = false
 
 [tool.ruff]
-line-length = 110
+line-length = 120
 target-version = "py312"
-extend-exclude = ["site", "**/.venv"]
+extend-exclude = ["**/.venv", "marimo/dist"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "S"]
-ignore = ["S101", "S603", "S607", "S608"]
+ignore = ["S101", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
-"projects/*/dashboards/*.py" = ["B018"]
-"scripts/build_data_index.py" = ["E501"]  # inline HTML/CSS template
+"marimo/notebooks/*.py" = ["B018"]  # marimo renders a cell's last expression
+
+[tool.ruff.lint.isort]
+known-third-party = ["marimo"]  # not the marimo/ gallery folder at the repo root

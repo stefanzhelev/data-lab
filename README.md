@@ -1,47 +1,36 @@
 # Data Lab
 
-Small, end-to-end data projects. Each demo goes from raw files to a tested model
-to a live dashboard that runs entirely in your browser.
-
-**Live:** [lab.stefanzhelev.com](https://lab.stefanzhelev.com) · **Data:** [data.stefanzhelev.com](https://data.stefanzhelev.com)
-
-| Demo | What it shows | Stack |
-|---|---|---|
-| [Messy orders](projects/messy-orders) | Cleaning, quarantining and reconciling a deliberately messy orders feed | dbt, DuckDB, marimo |
-
-## How it fits together
-
-```
-projects/<demo>/data, dbt, dagster   ──(GitHub Actions)──►  parquet on R2 (data.stefanzhelev.com/<demo>/)
-projects/<demo>/dashboards/*.py      ──(marimo islands)──►  SvelteKit site on Cloudflare Pages (lab.stefanzhelev.com)
-                                                            dashboards fetch the parquet and query it with DuckDB-in-WASM
-```
+Small data projects as [marimo](https://marimo.io) notebooks, published as a static gallery with
+[barnacles](https://github.com/stefanzhelev/barnacles).
 
 | Path | Purpose |
 |---|---|
-| `projects/<demo>/` | One self-contained demo: `demo.yml`, `data/`, optional `dbt/` and `dagster/`, `dashboards/` |
-| `libs/datalab/` | [`stefanzhelev-datalab`](https://pypi.org/project/stefanzhelev-datalab/) on PyPI: loads remote files into DuckDB, in the browser and locally |
-| `site/` | SvelteKit + shadcn-svelte site that hosts the dashboards as marimo islands |
-| `scripts/` | `build_islands.py` (notebooks → site fragments), `build_data_index.py` (bucket index page) |
-| `infra/` | OpenTofu, one file per provider: Cloudflare (bucket, CORS, index rewrite, Pages, CI tokens) and GitHub (Actions secrets, PyPI environments) |
-| `.github/workflows/` | CI, per-demo pipelines, data index, site deploy, PyPI release |
+| `marimo/` | The barnacles project: `barnacles.yaml` and `notebooks/*.py` (created with `barnacles init marimo`) |
+| `data/input/` | Small source files (CSV etc.) the notebooks read |
+| `data/output/` | Small files the notebooks produce |
+| `infra/` | OpenTofu for Cloudflare and GitHub (see [`infra/README.md`](infra/README.md)) |
 
-Every demo has its own environment: notebooks declare dependencies inline (PEP 723),
-pipelines have their own `pyproject.toml` and `uv.lock`. Nothing is shared at the root.
+| Notebook | What it shows | Mode |
+|---|---|---|
+| [Customer orders](marimo/notebooks/customer_orders.py) | Cleaning, quarantining and reconciling a deliberately messy orders feed with DuckDB | `html` (runs at build time) |
+| [Example](marimo/notebooks/example.py) | The barnacles starter notebook | `html-wasm` (runs in the browser) |
+
+Notebooks that read from `data/` use `mode: html` in `barnacles.yaml`: they run once at build time
+on your machine. A `html-wasm` notebook runs in the browser and only gets files placed in a
+`public/` folder next to it.
 
 ## Run locally
 
 ```bash
-# a pipeline
-cd projects/messy-orders/dbt && uv run dbt build --profiles-dir .
-
-# a dashboard (editable notebook, isolated env)
-uvx marimo edit --sandbox projects/messy-orders/dashboards/overview.py
-
-# the site
-uv run scripts/build_islands.py && cd site && npm ci && npm run dev
+uv sync                               # barnacles, marimo, duckdb, ruff
+uv run barnacles serve marimo         # build and serve the gallery at http://127.0.0.1:8000
+uv run barnacles edit marimo          # open the notebooks in the marimo editor
+uv run barnacles build marimo         # build into marimo/dist/
 ```
+
+Barnacles exports notebooks in this environment, so a package a notebook imports also goes in
+`pyproject.toml`'s `dev` group (as well as the notebook's own `# /// script` header).
 
 ## Licence
 
-Code: [MIT](LICENSE). Data: see each demo's `demo.yml`.
+Code: [MIT](LICENSE). Data in `data/` is synthetic (example.com addresses), CC-BY-4.0.

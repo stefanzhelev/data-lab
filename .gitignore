@@ -2,25 +2,12 @@
 .venv/
 __pycache__/
 *.egg-info/
-dist/
 .pytest_cache/
 .ruff_cache/
 __marimo__/
 
-# dbt
-projects/*/dbt/target/
-projects/*/dbt/logs/
-projects/*/dbt/dbt_packages/
-projects/*/dbt/publish/*
-!projects/*/dbt/publish/.gitkeep
-.user.yml
-
-# Site
-site/node_modules/
-site/build/
-site/.svelte-kit/
-site/src/generated/
-site/static/*/dbt-docs/
+# Barnacles build output (marimo/.gitignore covers it too)
+marimo/dist/
 
 # OpenTofu
 infra/.terraform/
@@ -32,9 +19,3 @@ infra/backend.hcl
 .env
 .envrc
 .DS_Store
-index.html
-index.json
-!site/**/index.html
-
-# Built in CI (deploy-pages.yml)
-site/static/wheels/

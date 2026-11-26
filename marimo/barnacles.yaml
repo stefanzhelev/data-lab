@@ -1,0 +1,25 @@
+# Barnacles settings. Every key is optional; paths are relative to this file.
+site:
+  title: Data Lab                # browser tab title
+  # header_title: My team        # text next to the logo (defaults to title)
+  # logo: logo.svg               # defaults to the barnacles logo
+  # favicon: favicon.svg         # defaults to the logo
+
+paths:
+  notebooks: notebooks
+  dist: dist
+
+defaults:
+  notebook:
+    mode: html-wasm              # or html: run once at build time
+
+items:                           # per-path overrides; notebooks show up without an entry
+  "notebooks/example.py":
+    title: Example
+    description: Python running in your browser.
+  "notebooks/customer_orders.py":
+    title: Customer orders
+    description: Cleaning, quarantining and reconciling a deliberately messy orders feed with DuckDB.
+    # Reads ../data/input/*.csv from disk, so it runs at build time (WASM pages
+    # only get files from a public/ folder next to the notebook).
+    mode: html
