@@ -6,6 +6,7 @@ Small data projects as [marimo](https://marimo.io) notebooks, published as a sta
 | Path | Purpose |
 |---|---|
 | `marimo/` | The barnacles project: `barnacles.yaml` and `notebooks/*.py` (created with `barnacles init marimo`) |
+| `marimo/jupyter/` | Jupyter notebooks (not in the gallery): the orders pipeline worked through in pandas (`practice_pandas`) and DuckDB (`practice_duckdb`), a timed `pipeline` exercise with its tests in `test_pipeline.py`, and `test_unittest`, a scratch test of `unittest` |
 | `data/input/` | Small source files (CSV etc.) the notebooks read |
 | `data/output/` | Small files the notebooks produce |
 | `infra/` | OpenTofu for Cloudflare and GitHub (see [`infra/README.md`](infra/README.md)) |
@@ -26,7 +27,12 @@ uv sync                               # barnacles, marimo, duckdb, ruff
 uv run barnacles serve marimo         # build and serve the gallery at http://127.0.0.1:8000
 uv run barnacles edit marimo          # open the notebooks in the marimo editor
 uv run barnacles build marimo         # build into marimo/dist/
+
+uv run --group jupyter jupyter lab    # the notebooks in marimo/jupyter/
+uv run --group jupyter jupyter execute marimo/jupyter/practice_pandas.ipynb   # run one top to bottom
 ```
+
+The Jupyter notebooks read `data/input/` and write to `data/output/<notebook>/`, wherever they're started from.
 
 Barnacles exports notebooks in this environment, so a package a notebook imports also goes in
 `pyproject.toml`'s `dev` group (as well as the notebook's own `# /// script` header).

@@ -16,6 +16,8 @@ dev = [
     "altair",
     "ruff>=0.8",
 ]
+# The notebooks in marimo/jupyter: `uv run --group jupyter jupyter lab`
+jupyter = ["jupyterlab"]
 
 [tool.uv]
 package = false
@@ -31,6 +33,10 @@ ignore = ["S101", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
 "marimo/notebooks/*.py" = ["B018"]  # marimo renders a cell's last expression
+"marimo/jupyter/*.ipynb" = ["E501"]  # copied study notebooks: long SQL strings, aligned comments
 
 [tool.ruff.lint.isort]
 known-third-party = ["marimo"]  # not the marimo/ gallery folder at the repo root
+
+[tool.ruff.format]
+exclude = ["marimo/jupyter/*.ipynb"]  # keep the copied notebooks' own layout
