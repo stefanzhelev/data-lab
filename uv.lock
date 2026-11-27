@@ -157,16 +157,16 @@ wheels = [
 
 [[package]]
 name = "barnacles"
-version = "0.2.1"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "marimo" },
     { name = "playwright" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/18/b4/10d050f4c5f051d8dbe1f9c17e12a26f5cf659d4f2ab20b3234b5a6f0867/barnacles-0.2.1.tar.gz", hash = "sha256:3e6f3f2254eaa63579e97dde66e8096daabed068b4b83b6be871159591c915dc", size = 20600, upload-time = "2026-11-25T20:39:20.018Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/63/e68f3dc94fb8a5ce8d00e67c3afbac88e9697b1733c77f5fb572d6106058/barnacles-0.4.0.tar.gz", hash = "sha256:aaa91659ee887ce6b624b94279f2b6c0f7bb5a3af87f7faa2953e9e3258010b7", size = 24977, upload-time = "2026-11-27T02:25:47.143Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/bc/8e95bd44d617a8da7a90a045bf62cfbdb1189789e61c74daac199c48bee3/barnacles-0.2.1-py3-none-any.whl", hash = "sha256:ea5f35e918936bf7b89f989ce1a99dd5ed7bb4df8cefec596661192b991758a8", size = 23748, upload-time = "2026-11-25T20:39:19.062Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/39/5842fe7ba89a34cbd9b01e35f817d770a50ce4947bc9ec8f03398e142a14/barnacles-0.4.0-py3-none-any.whl", hash = "sha256:ae7c6989034046a61f7b5317c5f47cc9e11c9acf307b85fa16e47eebe70bd786", size = 29224, upload-time = "2026-11-27T02:25:46.145Z" },
 ]
 
 [[package]]
@@ -475,7 +475,7 @@ jupyter = [
 [package.metadata.requires-dev]
 dev = [
     { name = "altair" },
-    { name = "barnacles", specifier = ">=0.2.1" },
+    { name = "barnacles", specifier = ">=0.4.0" },
     { name = "duckdb" },
     { name = "marimo", specifier = ">=0.26" },
     { name = "pandas" },

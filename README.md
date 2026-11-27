@@ -7,7 +7,7 @@ from the same files in `data/input/`. The marimo notebooks are published as a st
 | Path | Purpose |
 |---|---|
 | `bi/` | One folder per BI tool, so the same data can be built and compared in each |
-| `bi/marimo/` | The barnacles gallery: `barnacles.yaml` and `notebooks/*.py` (as if created with `cd bi && barnacles init marimo`) |
+| `bi/marimo/` | The barnacles gallery: `marimo.yaml` and `notebooks/*.py` (as if created with `cd bi && barnacles init marimo`) |
 | `bi/evidence/` | [Evidence](https://github.com/evidence-dev/evidence) (open-source, v40) version of the energy notebook, published at [`/evidence/`](https://lab.stefanzhelev.com/evidence/) |
 | `bi/jupyter/` | Jupyter notebooks (not in the gallery): the orders pipeline in pandas (`practice_pandas`) and DuckDB (`practice_duckdb`), a timed `pipeline` exercise with its tests in `test_pipeline.py`, and `test_unittest`, a scratch test of `unittest` |
 | `bi/observable/` | Placeholder for an Observable Framework version |
@@ -21,7 +21,7 @@ from the same files in `data/input/`. The marimo notebooks are published as a st
 | [Electricity transition](bi/marimo/notebooks/energy.py) | Who is moving off fossil electricity? OWID energy data in 6 charts; [Evidence version](bi/evidence/pages/index.md) uses the same file and SQL | `html-wasm` (runs in the browser) |
 | [Example](bi/marimo/notebooks/example.py) | The barnacles starter notebook | `html-wasm` (runs in the browser) |
 
-Notebooks that read from `data/` use `mode: html` in `barnacles.yaml`: they run once at build time
+Notebooks that read from `data/` use `mode: html` in `marimo.yaml`: they run once at build time
 on your machine. A `html-wasm` notebook runs in the browser and only gets files placed in a
 `public/` folder next to it, so `energy.py` reads `data/input/` locally and fetches the same file
 from GitHub (`main`) in the browser.
@@ -57,7 +57,7 @@ What ends up where on lab.stefanzhelev.com:
 
 | Path | From |
 |---|---|
-| `/` | the barnacles gallery (`bi/marimo/barnacles.yaml`) |
+| `/` | the barnacles gallery (`bi/marimo/marimo.yaml`) |
 | `/notebooks/<slug>/` | each notebook in `bi/marimo/notebooks/` |
 | `/evidence/` | the Evidence site (`bi/evidence`, `basePath: /evidence`) |
 

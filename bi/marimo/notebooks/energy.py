@@ -28,7 +28,7 @@ def _():
 
     # pandas does the download (DuckDB has no network access in the browser), then DuckDB owns the table.
     duckdb.register("energy_csv", pd.read_csv(SOURCE))
-    duckdb.sql("CREATE OR REPLACE TABLE energy AS SELECT * FROM energy_csv")
+    _ = duckdb.sql("CREATE OR REPLACE TABLE energy AS SELECT * FROM energy_csv")  # no cell output
     return alt, mo
 
 
