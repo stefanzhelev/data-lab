@@ -39,7 +39,7 @@ def _(mo):
 
     Electricity generation by source for every country since 1985, from
     [Our World in Data](https://github.com/owid/energy-data) (CC BY 4.0). The same file and the
-    same SQL drive the [Evidence version](../../evidence/) of this page, so the two can be
+    same SQL drive the [Evidence version](../../evidence/energy/) of this page, so the two can be
     compared chart by chart.
     """)
     return

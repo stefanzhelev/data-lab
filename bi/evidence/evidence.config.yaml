@@ -1,6 +1,10 @@
 deployment:
   basePath: /evidence
 
+appearance:
+  default: dark   # light, dark or system
+  switcher: true  # let visitors switch from the menu
+
 plugins:
   components:
     "@evidence-dev/core-components": {}

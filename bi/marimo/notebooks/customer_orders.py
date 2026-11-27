@@ -28,7 +28,8 @@ def _(mo):
     Two small CSV drops (`data/input/customers.csv`, `data/input/orders.csv`) with about
     15 planted defects: padded IDs, `£1,200.00` amounts, impossible dates, conflicting
     duplicates, unknown customers. The SQL below cleans what it can, **quarantines what it
-    can't, with a reason**, and reconciles every input row.
+    can't, with a reason**, and reconciles every input row. The [Evidence version](../../evidence/customer-orders/)
+    runs the same SQL on the same files.
     """)
     return
 
