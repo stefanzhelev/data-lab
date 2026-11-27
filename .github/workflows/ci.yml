@@ -25,7 +25,8 @@ jobs:
       - name: Lint
         run: uv run ruff check . && uv run ruff format --check .
       - name: Check marimo notebooks
-        run: uv run marimo check bi/marimo/notebooks/*.py
+        # Notebooks can sit in sub-folders (practice/, energy/), so list them explicitly.
+        run: uv run marimo check $(find bi/marimo/notebooks -name '*.py' -not -path '*/__marimo__/*' | sort)
       # The practice notebooks run their own test suites and fail on any failed test.
       # pipeline.ipynb is skipped: its stubs raise NotImplementedError until you fill them in.
       - name: Run the Jupyter notebooks
@@ -42,7 +43,7 @@ jobs:
       - name: Build the barnacles gallery
         run: uv run barnacles build bi/marimo
 
-      # Evidence version of bi/marimo/notebooks/energy.py, served at /evidence/ (basePath in
+      # Evidence versions of the marimo notebooks, served at /evidence/ (basePath in
       # bi/evidence/evidence.config.yaml).
       # Copied in after barnacles, which wipes bi/marimo/dist on every build.
       - uses: actions/setup-node@v5

@@ -17,13 +17,19 @@ items:                           # per-path overrides; notebooks show up without
   "notebooks/example.py":
     title: Example
     description: Python running in your browser.
-  "notebooks/customer_orders.py":
+  "notebooks/practice":
+    title: Practice
+    description: Data-cleaning exercises on small, deliberately messy files.
+  "notebooks/practice/customer_orders.py":
     title: Customer orders
     description: Cleaning, quarantining and reconciling a deliberately messy orders feed with DuckDB.
     # Reads <repo>/data/input/*.csv from disk, so it runs at build time (WASM pages
     # only get files from a public/ folder next to the notebook).
     mode: html
-  "notebooks/energy.py":
+  "notebooks/energy":
+    title: Energy
+    description: Public energy data from Our World in Data.
+  "notebooks/energy/energy.py":
     title: Electricity transition
     description: Who is moving off fossil electricity? OWID energy data, runs in your browser; compare with the Evidence version.
     # html-wasm (the default): the country picker re-runs in the browser. In the browser the

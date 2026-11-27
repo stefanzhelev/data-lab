@@ -1,0 +1,7 @@
+customer_id,name,email,country,signup_date,updated_at
+00017,Alice Smith,alice@example.com,GB,2023-01-15,2024-01-01 09:00:00
+00042,Bob Jones,robert.jones@example.com,GB,2023-02-20,2024-03-10 12:30:00
+00073,José Núñez,jose@example.es,ES,2023-03-05,2024-01-01 09:00:00
+00088,Nangula Shikongo,nangula@example.na,NA,2023-04-11,2024-01-01 09:00:00
+00091,Chen Wei,chen@example.cn,CN,,2024-01-01 09:00:00
+00105,,anon@example.com,,2023-07-01,2024-01-01 09:00:00

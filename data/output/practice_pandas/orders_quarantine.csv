@@ -1,0 +1,12 @@
+source_row,order_id,customer_id,order_date,amount,quantity,status,notes,reject_reason
+6,1005,00091,2024-02-30,20.00,1,shipped,,unparseable_order_date
+7,1006,00017,2024-03-03,N/A,1,shipped,,unparseable_amount
+8,1007,00999,2024-03-03,15.00,1,shipped,customer not in master,unknown_customer
+10,1009,00073,,8.00,1,shipped,,missing_order_date
+11,1010,00088,2024-03-04,9.99,,shipped,,missing_quantity
+12,1011,00017,2024-03-05,10.00,two,shipped,,unparseable_quantity
+15,1013,00073,2024-03-05,100.00,1,shipped,,conflicting_duplicate_order_id
+16,1013,00073,2024-03-05,110.00,1,shipped,amended?,conflicting_duplicate_order_id
+17,1014,17,2024-03-06,5.00,1,cancelled,,unknown_customer
+18,1015,00105,2024-03-06,3.00,1,lost_in_space,,invalid_status
+19,1016,00091,06/03/2024,11.00,1,shipped,,unparseable_order_date

@@ -15,8 +15,8 @@ def _():
     import duckdb
     import marimo as mo
 
-    # <repo>/bi/marimo/notebooks/this.py -> <repo>/data/input
-    INPUT = mo.notebook_dir().parents[2] / "data" / "input"
+    # <repo>/bi/marimo/notebooks/practice/this.py -> <repo>/data/input
+    INPUT = mo.notebook_dir().parents[3] / "data" / "input"
     return INPUT, alt, duckdb, mo
 
 
@@ -28,8 +28,8 @@ def _(mo):
     Two small CSV drops (`data/input/customers.csv`, `data/input/orders.csv`) with about
     15 planted defects: padded IDs, `£1,200.00` amounts, impossible dates, conflicting
     duplicates, unknown customers. The SQL below cleans what it can, **quarantines what it
-    can't, with a reason**, and reconciles every input row. The [Evidence version](../../evidence/customer-orders/)
-    runs the same SQL on the same files.
+    can't, with a reason**, and reconciles every input row. The
+    [Evidence version](../../../evidence/practice/customer-orders/) runs the same SQL on the same files.
     """)
     return
 

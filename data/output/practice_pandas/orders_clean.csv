@@ -1,0 +1,9 @@
+order_id,customer_id,country,order_date,amount,quantity,status,notes,source_row
+1001,00017,GB,2024-03-01,12.5,1,shipped,,2
+1002,00042,GB,2024-03-01,1200.0,2,shipped,"gift wrap, urgent",3
+1003,00073,ES,2024-03-02,30.0,3,delivered,,4
+1004,00088,NA,2024-03-02,45.0,1,delivered,,5
+1008,00042,GB,2024-03-04,-5.0,1,refunded,,9
+1012,00042,GB,2024-03-05,7.25,1,shipped,,13
+1017,00105,,2024-03-06,4.0,1,shipped,,20
+1018,00073,ES,2024-03-06,50.0,1,cancelled,,21

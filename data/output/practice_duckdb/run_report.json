@@ -1,0 +1,24 @@
+{
+  "customers": {
+    "quarantined": 0,
+    "rows_in": 8,
+    "rows_out": 6
+  },
+  "orders": {
+    "exact_duplicates_dropped": 1,
+    "quarantined": 11,
+    "reject_reasons": {
+      "conflicting_duplicate_order_id": 2,
+      "invalid_status": 1,
+      "missing_order_date": 1,
+      "missing_quantity": 1,
+      "unknown_customer": 2,
+      "unparseable_amount": 1,
+      "unparseable_order_date": 2,
+      "unparseable_quantity": 1
+    },
+    "rows_in": 20,
+    "valid": 8
+  },
+  "revenue_total": 1293.75
+}

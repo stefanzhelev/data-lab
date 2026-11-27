@@ -33,7 +33,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 ignore = ["S101", "S608"]
 
 [tool.ruff.lint.per-file-ignores]
-"bi/marimo/notebooks/*.py" = ["B018"]  # marimo renders a cell's last expression
+"bi/marimo/notebooks/**/*.py" = ["B018"]  # marimo renders a cell's last expression
 "bi/jupyter/*.ipynb" = ["E501"]  # copied study notebooks: long SQL strings, aligned comments
 
 

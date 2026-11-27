@@ -6,7 +6,7 @@ sidebar_position: 2
 **Who is moving off fossil electricity?** Electricity generation by source for every country since 1985, from
 [Our World in Data](https://github.com/owid/energy-data) (CC BY 4.0). The same file
 (`data/input/owid_energy.csv`) and the same SQL drive the
-[marimo version](https://lab.stefanzhelev.com/notebooks/energy/) of this page, so the two can be compared chart by chart.
+[marimo version](https://lab.stefanzhelev.com/notebooks/energy/energy/) of this page, so the two can be compared chart by chart.
 
 ```sql latest
 -- The latest year most countries have reported (the newest year is usually incomplete).

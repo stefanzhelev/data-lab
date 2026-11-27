@@ -7,7 +7,7 @@ sidebar_position: 1
 defects: padded IDs, `£1,200.00` amounts, impossible dates, conflicting duplicates, unknown
 customers. The SQL below cleans what it can, **quarantines what it can't, with a reason**, and
 reconciles every input row. Same file and same SQL as the
-[marimo version](https://lab.stefanzhelev.com/notebooks/customer-orders/).
+[marimo version](https://lab.stefanzhelev.com/notebooks/practice/customer-orders/).
 
 ```sql stg_customers
 SELECT *,

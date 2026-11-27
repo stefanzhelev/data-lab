@@ -24,7 +24,7 @@ def _():
     if sys.platform == "emscripten":
         SOURCE = f"https://raw.githubusercontent.com/stefanzhelev/data-lab/main/data/input/{_name}"
     else:
-        SOURCE = str(mo.notebook_dir().parents[2] / "data" / "input" / _name)
+        SOURCE = str(mo.notebook_dir().parents[3] / "data" / "input" / _name)
 
     # pandas does the download (DuckDB has no network access in the browser), then DuckDB owns the table.
     duckdb.register("energy_csv", pd.read_csv(SOURCE))
@@ -39,7 +39,7 @@ def _(mo):
 
     Electricity generation by source for every country since 1985, from
     [Our World in Data](https://github.com/owid/energy-data) (CC BY 4.0). The same file and the
-    same SQL drive the [Evidence version](../../evidence/energy/) of this page, so the two can be
+    same SQL drive the [Evidence version](../../../evidence/energy/energy/) of this page, so the two can be
     compared chart by chart.
     """)
     return
