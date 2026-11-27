@@ -4,15 +4,15 @@ Everything data-lab needs outside the repo, in one OpenTofu root applied locally
 
 | File | Manages |
 |---|---|
-| `cloudflare.tf` | R2 bucket (imported), its CORS policy, rewrite of `data.stefanzhelev.com/` → `/index.html`; Pages project `data-lab` with `lab.stefanzhelev.com`; two scoped API tokens for CI |
+| `cloudflare.tf` | R2 bucket (imported), its CORS policy, rewrite of `data.stefanzhelev.com/` → `/index.html`; Pages project `stefanzhelev-datalab` (`var.pages_project`) with `lab.stefanzhelev.com`; two scoped API tokens for CI |
 | `github.tf` | the Actions secrets the workflows read; `testpypi` and `pypi` environments (`pypi` needs your approval) |
 
 The CI tokens are minted here and written straight into GitHub secrets, so no credential is ever copied by hand:
 
 | Secret | Value |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | token limited to Pages Write |
-| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | token limited to object read/write on the bucket (ID / SHA-256 of value) |
+| `CLOUDFLARE_API_TOKEN` | token limited to Pages Write; used by the `deploy` job in `ci.yml` |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | token limited to object read/write on the bucket (ID / SHA-256 of value); used by the `deploy` job in `ci.yml` to upload files over Pages' 25 MiB limit to `lab-assets/` |
 | `CLOUDFLARE_ACCOUNT_ID`, `R2_BUCKET` | from `terraform.tfvars` |
 
 Not managed: the bucket's custom domain `data.stefanzhelev.com` (the provider can't import it), and the PyPI pending publishers (PyPI has no provider).

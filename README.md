@@ -1,35 +1,43 @@
 # Data Lab
 
-Small data projects as [marimo](https://marimo.io) notebooks, published as a static gallery with
-[barnacles](https://github.com/stefanzhelev/barnacles).
+Small data projects built in several BI tools side by side (marimo, Evidence, Jupyter, Observable),
+from the same files in `data/input/`. The marimo notebooks are published as a static gallery with
+[barnacles](https://github.com/stefanzhelev/barnacles), with the Evidence site next to it.
 
 | Path | Purpose |
 |---|---|
-| `marimo/` | The barnacles project: `barnacles.yaml` and `notebooks/*.py` (created with `barnacles init marimo`) |
-| `marimo/jupyter/` | Jupyter notebooks (not in the gallery): the orders pipeline worked through in pandas (`practice_pandas`) and DuckDB (`practice_duckdb`), a timed `pipeline` exercise with its tests in `test_pipeline.py`, and `test_unittest`, a scratch test of `unittest` |
-| `data/input/` | Small source files (CSV etc.) the notebooks read |
+| `bi/` | One folder per BI tool, so the same data can be built and compared in each |
+| `bi/marimo/` | The barnacles gallery: `barnacles.yaml` and `notebooks/*.py` (as if created with `cd bi && barnacles init marimo`) |
+| `bi/evidence/` | [Evidence](https://github.com/evidence-dev/evidence) (open-source, v40) version of the energy notebook, published at [`/evidence/`](https://lab.stefanzhelev.com/evidence/) |
+| `bi/jupyter/` | Jupyter notebooks (not in the gallery): the orders pipeline in pandas (`practice_pandas`) and DuckDB (`practice_duckdb`), a timed `pipeline` exercise with its tests in `test_pipeline.py`, and `test_unittest`, a scratch test of `unittest` |
+| `bi/observable/` | Placeholder for an Observable Framework version |
+| `data/input/` | Small source files (CSV etc.) the notebooks read; sources and licences in [`data/input/README.md`](data/input/README.md) |
 | `data/output/` | Small files the notebooks produce |
 | `infra/` | OpenTofu for Cloudflare and GitHub (see [`infra/README.md`](infra/README.md)) |
 
 | Notebook | What it shows | Mode |
 |---|---|---|
-| [Customer orders](marimo/notebooks/customer_orders.py) | Cleaning, quarantining and reconciling a deliberately messy orders feed with DuckDB | `html` (runs at build time) |
-| [Example](marimo/notebooks/example.py) | The barnacles starter notebook | `html-wasm` (runs in the browser) |
+| [Customer orders](bi/marimo/notebooks/customer_orders.py) | Cleaning, quarantining and reconciling a deliberately messy orders feed with DuckDB | `html` (runs at build time) |
+| [Electricity transition](bi/marimo/notebooks/energy.py) | Who is moving off fossil electricity? OWID energy data in 6 charts; [Evidence version](bi/evidence/pages/index.md) uses the same file and SQL | `html-wasm` (runs in the browser) |
+| [Example](bi/marimo/notebooks/example.py) | The barnacles starter notebook | `html-wasm` (runs in the browser) |
 
 Notebooks that read from `data/` use `mode: html` in `barnacles.yaml`: they run once at build time
 on your machine. A `html-wasm` notebook runs in the browser and only gets files placed in a
-`public/` folder next to it.
+`public/` folder next to it, so `energy.py` reads `data/input/` locally and fetches the same file
+from GitHub (`main`) in the browser.
 
 ## Run locally
 
 ```bash
 uv sync                               # barnacles, marimo, duckdb, ruff
-uv run barnacles serve marimo         # build and serve the gallery at http://127.0.0.1:8000
-uv run barnacles edit marimo          # open the notebooks in the marimo editor
-uv run barnacles build marimo         # build into marimo/dist/
+uv run barnacles serve bi/marimo      # build and serve the gallery at http://127.0.0.1:8000
+uv run barnacles edit bi/marimo       # open the notebooks in the marimo editor
+uv run barnacles build bi/marimo      # build into bi/marimo/dist/
 
-uv run --group jupyter jupyter lab    # the notebooks in marimo/jupyter/
-uv run --group jupyter jupyter execute marimo/jupyter/practice_pandas.ipynb   # run one top to bottom
+cd bi/evidence && npm ci && npm run sources && npm run dev   # the Evidence page (http://localhost:3000/evidence/)
+
+uv run --group jupyter jupyter lab    # the notebooks in bi/jupyter/
+uv run --group jupyter jupyter execute bi/jupyter/practice_pandas.ipynb   # run one top to bottom
 ```
 
 The Jupyter notebooks read `data/input/` and write to `data/output/<notebook>/`, wherever they're started from.
@@ -37,6 +45,26 @@ The Jupyter notebooks read `data/input/` and write to `data/output/<notebook>/`,
 Barnacles exports notebooks in this environment, so a package a notebook imports also goes in
 `pyproject.toml`'s `dev` group (as well as the notebook's own `# /// script` header).
 
+## CI/CD
+
+| Workflow | Runs on | Does |
+|---|---|---|
+| [`ci.yml`](.github/workflows/ci.yml) | every pull request and push to `main` | ruff; `marimo check` on `bi/marimo/notebooks`; runs the Jupyter notebooks in `bi/jupyter` (their tests must pass); builds the barnacles gallery from `bi/marimo` and the Evidence site from `bi/evidence` |
+| | push to `main` only | deploys the result to Cloudflare Pages (`stefanzhelev-datalab`) at [lab.stefanzhelev.com](https://lab.stefanzhelev.com) |
+| [`infra.yml`](.github/workflows/infra.yml) | changes under `infra/` | `tofu fmt` and `tofu validate` only; `tofu apply` runs locally (see [`infra/README.md`](infra/README.md)) |
+
+What ends up where on lab.stefanzhelev.com:
+
+| Path | From |
+|---|---|
+| `/` | the barnacles gallery (`bi/marimo/barnacles.yaml`) |
+| `/notebooks/<slug>/` | each notebook in `bi/marimo/notebooks/` |
+| `/evidence/` | the Evidence site (`bi/evidence`, `basePath: /evidence`) |
+
+Cloudflare Pages rejects files over 25 MiB, so the deploy job moves Evidence's two DuckDB-WASM
+files to `data.stefanzhelev.com/lab-assets/` (R2) and points the site at them. `bi/jupyter` and
+`bi/observable` are not published.
+
 ## Licence
 
-Code: [MIT](LICENSE). Data in `data/` is synthetic (example.com addresses), CC-BY-4.0.
+Code: [MIT](LICENSE). Data: see [`data/input/README.md`](data/input/README.md) (synthetic orders data and Our World in Data, both CC BY 4.0).

@@ -6,8 +6,8 @@ __pycache__/
 .ruff_cache/
 __marimo__/
 
-# Barnacles build output (marimo/.gitignore covers it too)
-marimo/dist/
+# Barnacles build output (bi/marimo/.gitignore covers it too)
+bi/marimo/dist/
 
 # OpenTofu
 infra/.terraform/
@@ -19,3 +19,8 @@ infra/backend.hcl
 .env
 .envrc
 .DS_Store
+
+# Evidence (bi/evidence/.gitignore covers it too)
+bi/evidence/node_modules/
+bi/evidence/.evidence/
+bi/evidence/build/

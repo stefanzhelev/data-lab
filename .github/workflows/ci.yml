@@ -1,7 +1,8 @@
 name: CI
 
-# Lint + check the notebooks, build the barnacles gallery (marimo/dist), and on
-# main deploy it to Cloudflare Pages (lab.stefanzhelev.com, see infra/cloudflare.tf).
+# Lint, check the marimo notebooks, run the Jupyter notebooks (bi/jupyter), build the barnacles
+# gallery (bi/marimo/dist) plus the Evidence site (bi/marimo/dist/evidence), and on main deploy
+# both to Cloudflare Pages (lab.stefanzhelev.com, see infra/cloudflare.tf).
 
 on:
   pull_request:
@@ -24,7 +25,14 @@ jobs:
       - name: Lint
         run: uv run ruff check . && uv run ruff format --check .
       - name: Check marimo notebooks
-        run: uv run marimo check marimo/notebooks/*.py
+        run: uv run marimo check bi/marimo/notebooks/*.py
+      # The practice notebooks run their own test suites and fail on any failed test.
+      # pipeline.ipynb is skipped: its stubs raise NotImplementedError until you fill them in.
+      - name: Run the Jupyter notebooks
+        run: |
+          for nb in practice_pandas practice_duckdb test_unittest; do
+            uv run --group jupyter jupyter execute "bi/jupyter/$nb.ipynb"
+          done
       - uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
@@ -32,11 +40,26 @@ jobs:
       - name: Install Chromium for card thumbnails
         run: uv run barnacles install-browser --with-deps
       - name: Build the barnacles gallery
-        run: uv run barnacles build marimo
+        run: uv run barnacles build bi/marimo
+
+      # Evidence version of bi/marimo/notebooks/energy.py, served at /evidence/ (basePath in
+      # bi/evidence/evidence.config.yaml).
+      # Copied in after barnacles, which wipes bi/marimo/dist on every build.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: bi/evidence/package-lock.json
+      - name: Build the Evidence site
+        working-directory: bi/evidence
+        run: npm ci --no-audit --no-fund && npm run sources && npm run build
+      - name: Add Evidence to the gallery output
+        run: cp -R bi/evidence/build bi/marimo/dist/evidence
+
       - uses: actions/upload-artifact@v5
         with:
           name: gallery
-          path: marimo/dist/
+          path: bi/marimo/dist/
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
@@ -50,6 +73,34 @@ jobs:
         with:
           name: gallery
           path: dist
+      # Pages rejects files over 25 MiB. Evidence bundles two DuckDB-WASM builds (~35-40 MB
+      # each), so those go to the R2 bucket behind data.stefanzhelev.com (its CORS policy allows
+      # lab.stefanzhelev.com, see infra/cloudflare.tf) and the one-line JS module that holds
+      # each file's URL is pointed there. Names are content-hashed, so they can be cached forever.
+      - name: Move files over 25 MiB to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # R2 doesn't support the newer default checksum headers of AWS CLI v2.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ENDPOINT: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          DEST: s3://${{ secrets.R2_BUCKET }}/lab-assets
+          PUBLIC: https://data.stefanzhelev.com/lab-assets
+        run: |
+          find dist -type f -name '*.wasm' -size +26214400c | while read -r f; do
+            name=$(basename "$f")
+            aws s3 cp "$f" "$DEST/$name" --endpoint-url "$ENDPOINT" \
+              --content-type application/wasm --cache-control "public, max-age=31536000, immutable"
+            url_path="/${f#dist/}"
+            grep -rlF "\"$url_path\"" dist --include='*.js' | xargs sed -i "s|\"$url_path\"|\"$PUBLIC/$name\"|g"
+            rm "$f"
+            echo "moved $name to $PUBLIC/$name"
+          done
+          if find dist -type f -size +26214400c | grep .; then
+            echo "::error::files above are over the 25 MiB Cloudflare Pages limit"; exit 1
+          fi
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:

@@ -15,8 +15,8 @@ def _():
     import duckdb
     import marimo as mo
 
-    # <repo>/marimo/notebooks/this.py -> <repo>/data/input
-    INPUT = mo.notebook_dir().parents[1] / "data" / "input"
+    # <repo>/bi/marimo/notebooks/this.py -> <repo>/data/input
+    INPUT = mo.notebook_dir().parents[2] / "data" / "input"
     return INPUT, alt, duckdb, mo
 
 
