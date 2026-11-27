@@ -9,6 +9,7 @@
 	export let data;
 </script>
 
-<EvidenceDefaultLayout {data} logo="/evidence/data-lab.svg" homePageName="Data Lab">
+<!-- builtWithEvidence={false}: no "Built with Evidence" link at the foot of the sidebar. -->
+<EvidenceDefaultLayout {data} logo="/evidence/data-lab.svg" homePageName="Data Lab" builtWithEvidence={false}>
 	<slot slot="content" />
 </EvidenceDefaultLayout>
