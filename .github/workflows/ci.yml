@@ -54,6 +54,10 @@ jobs:
       - name: Build the Evidence site
         working-directory: bi/evidence
         run: npm ci --no-audit --no-fund && npm run sources && npm run build
+      # Card images for the Evidence index page (components/GalleryCard.svelte), with the
+      # Chromium installed above for the barnacles thumbnails.
+      - name: Screenshot the Evidence pages
+        run: uv run bi/evidence/thumbnails.py
       - name: Add Evidence to the gallery output
         run: cp -R bi/evidence/build bi/marimo/dist/evidence
 

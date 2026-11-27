@@ -8,7 +8,7 @@ from the same files in `data/input/`. The marimo notebooks are published as a st
 |---|---|
 | `bi/` | One folder per BI tool, so the same data can be built and compared in each |
 | `bi/marimo/` | The barnacles gallery: `marimo.yaml` and `notebooks/` (sub-folders `practice/` and `energy/` become gallery sections; as if created with `cd bi && barnacles init marimo`) |
-| `bi/evidence/` | [Evidence](https://github.com/evidence-dev/evidence) (open-source, v40) versions of the three marimo dashboards (same files, same SQL), dark by default, published at [`/evidence/`](https://lab.stefanzhelev.com/evidence/) |
+| `bi/evidence/` | [Evidence](https://github.com/evidence-dev/evidence) (open-source, v40) versions of the three marimo dashboards (same files, same SQL), dark by default, published at [`/evidence/`](https://lab.stefanzhelev.com/evidence/). The index page is a card gallery (`components/GalleryCard.svelte`) whose images `thumbnails.py` screenshots in CI |
 | `bi/jupyter/` | Jupyter notebooks (not in the gallery): the orders pipeline in pandas (`practice_pandas`) and DuckDB (`practice_duckdb`), a timed `pipeline` exercise with its tests in `test_pipeline.py`, and `test_unittest`, a scratch test of `unittest` |
 | `bi/observable/` | Placeholder for an Observable Framework version |
 | `data/input/` | Small source files (CSV etc.) the notebooks read; sources and licences in [`data/input/README.md`](data/input/README.md) |
