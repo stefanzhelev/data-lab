@@ -43,23 +43,33 @@ jobs:
       - name: Build the barnacles gallery
         run: uv run barnacles build bi/marimo
 
-      # Evidence versions of the marimo notebooks, served at /evidence/ (basePath in
-      # bi/evidence/evidence.config.yaml).
-      # Copied in after barnacles, which wipes bi/marimo/dist on every build.
+      # Evidence and Observable Framework versions of the marimo notebooks, served at /evidence/
+      # and /observable/ (base paths in their configs). Copied in after barnacles, which wipes
+      # bi/marimo/dist on every build. Card images for their index pages come from bi/thumbnails.py,
+      # with the Chromium installed above for the barnacles thumbnails.
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: bi/evidence/package-lock.json
+          cache-dependency-path: |
+            bi/evidence/package-lock.json
+            bi/observable/package-lock.json
       - name: Build the Evidence site
         working-directory: bi/evidence
         run: npm ci --no-audit --no-fund && npm run sources && npm run build
-      # Card images for the Evidence index page (components/GalleryCard.svelte), with the
-      # Chromium installed above for the barnacles thumbnails.
       - name: Screenshot the Evidence pages
-        run: uv run bi/evidence/thumbnails.py
+        run: uv run bi/thumbnails.py evidence
       - name: Add Evidence to the gallery output
         run: cp -R bi/evidence/build bi/marimo/dist/evidence
+
+      # Data loaders (src/data/*.parquet.py) run with the repo's uv environment.
+      - name: Build the Observable Framework site
+        working-directory: bi/observable
+        run: npm ci --no-audit --no-fund && npm run build
+      - name: Screenshot the Observable pages
+        run: uv run bi/thumbnails.py observable
+      - name: Add Observable to the gallery output
+        run: cp -R bi/observable/dist bi/marimo/dist/observable
 
       - uses: actions/upload-artifact@v5
         with:
@@ -78,10 +88,11 @@ jobs:
         with:
           name: gallery
           path: dist
-      # Pages rejects files over 25 MiB. Evidence bundles two DuckDB-WASM builds (~35-40 MB
-      # each), so those go to the R2 bucket behind data.stefanzhelev.com (its CORS policy allows
-      # lab.stefanzhelev.com, see infra/cloudflare.tf) and the one-line JS module that holds
-      # each file's URL is pointed there. Names are content-hashed, so they can be cached forever.
+      # Pages rejects files over 25 MiB. Evidence and Observable Framework each bundle two DuckDB-WASM
+      # builds (~35-40 MB each), so those go to the R2 bucket behind data.stefanzhelev.com (its CORS
+      # policy allows lab.stefanzhelev.com, see infra/cloudflare.tf) under the same path they have
+      # here (lab-assets/<path in dist>), and every quoted reference ending in that path, absolute
+      # (Evidence) or relative (Framework's import.meta.resolve), is pointed there.
       - name: Move files over 25 MiB to R2
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -94,14 +105,28 @@ jobs:
           DEST: s3://${{ secrets.R2_BUCKET }}/lab-assets
           PUBLIC: https://data.stefanzhelev.com/lab-assets
         run: |
-          find dist -type f -name '*.wasm' -size +26214400c | while read -r f; do
-            name=$(basename "$f")
-            aws s3 cp "$f" "$DEST/$name" --endpoint-url "$ENDPOINT" \
+          find dist -type f -name '*.wasm' -size +26214400c | sort | while read -r f; do
+            rel="${f#dist/}"
+            aws s3 cp "$f" "$DEST/$rel" --endpoint-url "$ENDPOINT" \
               --content-type application/wasm --cache-control "public, max-age=31536000, immutable"
-            url_path="/${f#dist/}"
-            grep -rlF "\"$url_path\"" dist --include='*.js' | xargs sed -i "s|\"$url_path\"|\"$PUBLIC/$name\"|g"
+            python3 - "$rel" "$PUBLIC/$rel" <<'PY'
+          import pathlib, re, sys
+          rel, url = sys.argv[1], sys.argv[2]
+          site = rel.split("/", 1)[0]  # evidence/ or observable/
+          in_site = rel.split("/", 1)[1]  # the path the site's own JS uses, absolute or relative
+          pattern = re.compile(r'"[^"\s]*' + re.escape(in_site) + '"')
+          hits = 0
+          for js in pathlib.Path("dist", site).rglob("*.js"):
+              text = js.read_text(encoding="utf-8", errors="surrogateescape")
+              new, n = pattern.subn(f'"{url}"', text)
+              if n:
+                  js.write_text(new, encoding="utf-8", errors="surrogateescape")
+                  hits += n
+          if not hits:
+              sys.exit(f"no reference to {in_site} found under dist/{site}")
+          print(f"moved {rel} to {url} ({hits} references)")
+          PY
             rm "$f"
-            echo "moved $name to $PUBLIC/$name"
           done
           if find dist -type f -size +26214400c | grep .; then
             echo "::error::files above are over the 25 MiB Cloudflare Pages limit"; exit 1

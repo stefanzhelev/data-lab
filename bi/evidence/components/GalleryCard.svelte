@@ -1,6 +1,6 @@
 <!--
 	A gallery card for the index page, styled like the barnacles gallery cards.
-	Thumbnails are screenshots of each page that CI takes after the build (bi/evidence/thumbnails.py)
+	Thumbnails are screenshots of each page that CI takes after the build (bi/thumbnails.py evidence)
 	and serves at /evidence/thumbnails/<thumb>.png and <thumb>-dark.png. Without them
 	(e.g. `npm run dev`) the card shows the folder name instead.
 
